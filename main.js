@@ -1,12 +1,12 @@
 const DEBUG = false;
 const RESIN_LIMIT = 200;
-const RECHARGE_INTERVAL = 8;    //minutes
+const RECHARGE_INTERVAL = 8;    // minutes
 
 // Update HTML
 document.querySelector("#resin").setAttribute("max", RESIN_LIMIT);
-document.querySelector("#basic-addon1").innerHTML = `Current Resin (0 - ${RESIN_LIMIT})`;
+document.querySelector("#basic-addon1").innerHTML = `Résine Actuelle (0 - ${RESIN_LIMIT})`;
 
-//Main
+// Main
 document.querySelector("#resin").focus();
 function calculate(resin, start_time){
     const time_diff = parseInt(Math.abs(new Date().getTime() - start_time.getTime()) / 1000);
@@ -19,13 +19,13 @@ function calculate(resin, start_time){
     const M_cur = parseInt((minutes_to_refill - time_diff / 60) % 60);
     const S_cur = (cur_res < RESIN_LIMIT ? parseInt((minutes_to_refill * 60 - time_diff) % 60) : 0);
 
-    if(DEBUG)   console.log({minutes_to_refill}, {time_diff});
-    if(H_start < 0 || M_start < 0 || H_cur < 0 || M_cur < 0 || cur_res > RESIN_LIMIT)   return;
+    if(DEBUG) console.log({minutes_to_refill}, {time_diff});
+    if(H_start < 0 || M_start < 0 || H_cur < 0 || M_cur < 0 || cur_res > RESIN_LIMIT) return;
 
     document.querySelector("#current_resin").innerHTML = cur_res;
     document.querySelector("#refill_time").innerHTML =  H_cur + "h " + M_cur + "m " + S_cur + "s";
-    document.querySelector("#refill_date").innerHTML = moment(start_time).add(H_start, "hours").add(M_start, "minutes").format("LT");
-    document.title =  cur_res + " Resin | " + H_cur + "h " + M_cur + "m " + " left";
+    document.querySelector("#refill_date").innerHTML = moment(start_time).add(H_start, "hours").add(M_start, "minutes").format("HH:mm");
+    document.title = cur_res + " Résine | " + H_cur + "h " + M_cur + "m restant";
 
     let titles = document.getElementsByClassName("title_top");
     for (let i = 0; i < titles.length; i++) {
@@ -33,23 +33,23 @@ function calculate(resin, start_time){
     }
 }
 
-//Loop
+// Loop
 var refresh;
 function calculateInit(){
     let resin_obj = document.querySelector("#resin");
     const resin = resin_obj.value;
-    if(resin < 0 || resin > RESIN_LIMIT || resin == "")   return;
+    if(resin < 0 || resin > RESIN_LIMIT || resin == "") return;
     
     clearInterval(refresh);
     const start_time = new Date();
     calculate(resin, start_time);
-    refresh = setInterval(function(){calculate(resin, start_time)}, 1000);
+    refresh = setInterval(function(){ calculate(resin, start_time); }, 1000);
     resin_obj.value = "";
 }
 
-//On enter key press 
-document.querySelector("#resin").onkeypress=function(e){
-    if(e.keyCode==13){
+// On enter key press 
+document.querySelector("#resin").onkeypress = function(e){
+    if(e.keyCode == 13){
         calculateInit();
     }
 }
